@@ -1,18 +1,47 @@
+<<<<<<< HEAD
 # ccpm_from_slides_clean.py
 # Clean CCPM diagram: slide-accurate shapes, uniform gaps, no overlaps.
 
+=======
+"""
+Critical Chain Project Management (CCPM) Diagram Generator
+
+Creates a professional CCPM schedule visualization with:
+- Critical chain tasks (rectangles)
+- Feeding buffers (left-facing trapezoids)
+- Project buffer (project completion buffer)
+- Resource buffers (triangle flags)
+"""
+
+from typing import Tuple, List
+from collections import namedtuple
+>>>>>>> 5823195 (Update CCPM diagram project)
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, Polygon, FancyArrowPatch
 from matplotlib import rcParams
 
+<<<<<<< HEAD
 # ---------- Theme ----------
 rcParams["pdf.fonttype"] = 42
 rcParams["ps.fonttype"]  = 42
 rcParams["font.size"]    = 10
+=======
+# ---------- Type Definitions ----------
+Point = Tuple[float, float]
+Box = Tuple[float, float, float, float]  # (x, y, width, height)
+ShapeData = namedtuple("ShapeData", ["points", "box"])
+
+# ---------- Theme & Colors ----------
+rcParams["pdf.fonttype"] = 42
+rcParams["ps.fonttype"]  = 42
+rcParams["font.size"]    = 10
+
+>>>>>>> 5823195 (Update CCPM diagram project)
 EDGE       = "#222222"
 TASK_COLOR = "#E8E8E8"   # tasks
 FB_COLOR   = "#8EC9FF"   # feeding buffers
 PB_COLOR   = "#FFC933"   # project buffer
+<<<<<<< HEAD
 RB_COLOR   = "#FFB0B0"   # resource flags
 
 # ---------- Shape helpers ----------
@@ -47,6 +76,94 @@ def center(b):     x,y,w,h=b; return (x+w/2, y+h/2)
 def arrow(ax, p1, p2):
     ax.add_patch(FancyArrowPatch(p1, p2, arrowstyle="->", mutation_scale=12,
                                  linewidth=1.4, color=EDGE))
+=======
+RB_COLOR   = "#FFB0B0"   # resource buffers/flags
+
+# ---------- Layout Constants ----------
+TASK_WIDTH = 1.8
+TASK_HEIGHT = 0.8
+BUFFER_WIDTH = 1.6
+BUFFER_HEIGHT = 0.8
+TRAP_INDENT = 0.4  # trapezoid left indent factor
+FLAG_SIZE = 0.5
+TEXT_SIZE = 11
+FLAG_TEXT_SIZE = 10
+FONT_WEIGHT = "bold"
+TEXT_COLOR = "#1a1a1a"
+
+# ---------- Shape Helpers ----------
+def task(ax: plt.Axes, x: float, y: float, w: float = TASK_WIDTH,
+         h: float = TASK_HEIGHT, txt: str = "") -> Box:
+    """Create a rectangular task box on the diagram."""
+    rect = Rectangle((x, y), w, h, facecolor=TASK_COLOR, edgecolor=EDGE, linewidth=1.4)
+    ax.add_patch(rect)
+    ax.text(x + w/2, y + h/2, txt, ha="center", va="center",
+            fontsize=TEXT_SIZE, fontweight=FONT_WEIGHT, color=TEXT_COLOR)
+    return (x, y, w, h)
+
+
+def trap_left(ax: plt.Axes, x: float, y: float, w: float = BUFFER_WIDTH,
+              h: float = BUFFER_HEIGHT, txt: str = "FB", color: str = FB_COLOR) -> ShapeData:
+    """Create a left-facing trapezoid (buffer) on the diagram.
+    
+    Returns:
+        ShapeData with polygon points and bounding box.
+    """
+    indent = TRAP_INDENT * w
+    pts = [(x, y), (x + w, y), (x + w, y + h), (x + indent, y + h)]
+    poly = Polygon(pts, closed=True, facecolor=color, edgecolor=EDGE, linewidth=1.4)
+    ax.add_patch(poly)
+    ax.text(x + 0.70*w, y + h/2, txt, ha="center", va="center",
+            fontsize=TEXT_SIZE, fontweight=FONT_WEIGHT)
+    return ShapeData(points=pts, box=(x, y, w, h))
+
+
+def rb_flag(ax: plt.Axes, x: float, y: float, s: float = FLAG_SIZE,
+            label: str = "RB") -> Polygon:
+    """Create a triangle flag (resource buffer) on the diagram."""
+    tri = Polygon([(x, y), (x + s, y), (x + 0.5*s, y + 0.58*s)],
+                  closed=True, facecolor=RB_COLOR, edgecolor=EDGE, linewidth=1.4)
+    ax.add_patch(tri)
+    ax.text(x + 0.5*s, y + 0.8*s, label, ha="center", va="bottom",
+            fontsize=FLAG_TEXT_SIZE, fontweight=FONT_WEIGHT)
+    return tri
+
+# ---------- Anchor Helpers ----------
+def left_mid(box: Box) -> Point:
+    """Get the midpoint of the left edge of a box."""
+    x, y, w, h = box
+    return (x, y + h/2)
+
+
+def right_mid(box: Box) -> Point:
+    """Get the midpoint of the right edge of a box."""
+    x, y, w, h = box
+    return (x + w, y + h/2)
+
+
+def top_mid(box: Box) -> Point:
+    """Get the midpoint of the top edge of a box."""
+    x, y, w, h = box
+    return (x + w/2, y + h)
+
+
+def bottom_mid(box: Box) -> Point:
+    """Get the midpoint of the bottom edge of a box."""
+    x, y, w, h = box
+    return (x + w/2, y)
+
+
+def center(box: Box) -> Point:
+    """Get the center point of a box."""
+    x, y, w, h = box
+    return (x + w/2, y + h/2)
+
+
+def arrow(ax: plt.Axes, p1: Point, p2: Point, width: float = 1.4) -> None:
+    """Draw an arrow between two points."""
+    ax.add_patch(FancyArrowPatch(p1, p2, arrowstyle="->", mutation_scale=12,
+                                 linewidth=width, color=EDGE))
+>>>>>>> 5823195 (Update CCPM diagram project)
 
 # ---------- Figure ----------
 fig, ax = plt.subplots(figsize=(12.6, 5.0))
@@ -121,4 +238,8 @@ plt.savefig("ccpm_from_slides_clean.pdf", bbox_inches="tight")
 plt.savefig("ccpm_from_slides_clean.svg", bbox_inches="tight")
 print("✅ Exported: ccpm_from_slides_clean.png / .pdf / .svg")
 
+<<<<<<< HEAD
 plt.show()
+=======
+plt.show()
+>>>>>>> 5823195 (Update CCPM diagram project)
